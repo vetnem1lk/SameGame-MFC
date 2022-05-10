@@ -1,8 +1,4 @@
-﻿
-// SameGameDoc.cpp: реализация класса CSameGameDoc 
-//
-
-#include "pch.h"
+﻿#include "pch.h"
 #include "framework.h"
 // SHARED_HANDLERS можно определить в обработчиках фильтров просмотра реализации проекта ATL, эскизов
 // и поиска; позволяет совместно использовать код документа в данным проекте.
@@ -43,7 +39,7 @@ BOOL CSameGameDoc::OnNewDocument()
 	if (!CDocument::OnNewDocument())
 		return FALSE;
 
-	// Установка (или сброс) параметров доски
+	// set (or reset) board options
 	m_board.SetupBoard();
 
 	return TRUE;

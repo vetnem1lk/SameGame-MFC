@@ -1,8 +1,4 @@
 ﻿
-// SameGameDoc.h: интерфейс класса CSameGameDoc 
-//
-
-
 #pragma once
 
 #include "CSameGameBoard.h"
@@ -19,7 +15,7 @@ public:
 
 	// Операции
 public:
-	// Геттеры для получения информации о параметрах игрового поля
+	// get the color in a certain area of the game board
 	COLORREF GetBoardSpace(int row, int col)
 	{
 		return m_board.GetBoardSpace(row, col);

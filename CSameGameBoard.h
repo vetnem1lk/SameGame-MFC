@@ -1,63 +1,61 @@
+
 #pragma once
+
 class CSameGameBoard
 {
 public:
-	// Конструктор по умолчанию
 	CSameGameBoard(void);
 
-	// Деструктор
 	~CSameGameBoard(void);
 
-	// Функция для рандомной расстановки блоков в начале игры
+	// creating and configuring game board settings
 	void SetupBoard(void);
 
-	// Получаем цвет в определенном участке игрового поля
+	// get the color in a certain area of the game board
 	COLORREF GetBoardSpace(int row, int col);
 
-	// Геттеры для получения информации о параметрах игрового поля
+	//  counting the number of remaining blocks
+	int GetRemainingCount(void) const { return m_nRemaining; }
 	int GetWidth(void) const { return m_nWidth; }
 	int GetHeight(void) const { return m_nHeight; }
 	int GetColumns(void) const { return m_nColumns; }
 	int GetRows(void) const { return m_nRows; }
-	/*  Мы закончили игру? */
-	bool IsGameOver(void) const;
-	/*  Подсчет количества оставщихся блоков */
-	int GetRemainingCount(void) const { return m_nRemaining; }
-	/*  Функция для удаления всех примыкающих блоков */
-	int DeleteBlocks(int row, int col);
 
-	// Функция для удаления игрового поля и освобождения памяти
+	bool IsGameOver(void) const;
+	int DeleteBlocks(int row, int col);
 	void DeleteBoard(void);
+
 private:
-	// Функция для создания игрового поля и выделения памяти под него
 	void CreateBoard(void);
 
-	/*  Перечисление с вариантами направления (откуда мы пришли). Потребуется для удаления блоков */
-	enum Direction
+	// enumeration with direction options (where we came from)
+	enum class Direction
 	{
-		DIRECTION_UP,
-		DIRECTION_DOWN,
-		DIRECTION_LEFT,
-		DIRECTION_RIGHT
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT
 	};
-	/*  Вспомогательная рекурсивная функция для удаления примыкающих блоков */
+
+	// Helper recursive function to remove adjoining blocks
 	int DeleteNeighborBlocks(int row, int col, int color,
 		Direction direction);
-	/*  Функция для сжатия доски после того, как были удалены блоки */
+
+	// compact the board after blocks have been removed
 	void CompactBoard(void);
 
-	// Указатель на двумерный массив
 	int** m_arrBoard;
 
-	// Список цветов: 0 – это цвет фона, 1-3 – это цвета блоков
+	// list of colors: 0 is the background color, 1-3 are the block colors
 	COLORREF m_arrColors[4];
 
-	// Информация о размере игрового поля
+	// Information about the size of the playing field
 	int m_nColumns;
 	int m_nRows;
 	int m_nHeight;
 	int m_nWidth;
-	/*  Количество оставшихся блоков */
+
+	// Number of remaining blocks
 	int m_nRemaining;
 };
 

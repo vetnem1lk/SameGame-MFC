@@ -1,6 +1,4 @@
 ﻿
-// SameGame.h: основной файл заголовка для приложения SameGame
-//
 #pragma once
 
 #ifndef __AFXWIN_H__

@@ -12,34 +12,32 @@ CSameGameBoard::CSameGameBoard(void)
 	m_arrColors[2] = RGB(255, 255, 64);
 	m_arrColors[3] = RGB(0, 0, 255);
 
-	// Создание и настройка параметров игровой доски
 	SetupBoard();
 }
 
 CSameGameBoard::~CSameGameBoard(void)
 {
-	// Просто удаляем нашу доску
 	DeleteBoard();
 }
 
 void CSameGameBoard::SetupBoard(void)
 {
-	// При необходимости создаем доску
+	// create a board if necessary
 	if (m_arrBoard == NULL)
 		CreateBoard();
 
-	// Устанавливаем каждому блоку случайный цвет
+	// set each block to a random color
 	for (int row = 0; row < m_nRows; row++)
 		for (int col = 0; col < m_nColumns; col++)
 			m_arrBoard[row][col] = (rand() % 3) + 1;
 
-	// Устанавливаем количество оставшихся блоков
+	// set the number of remaining blocks
 	m_nRemaining = m_nRows * m_nColumns;
 }
 
 COLORREF CSameGameBoard::GetBoardSpace(int row, int col)
 {
-	// Проверяем границы массива
+	// checking array bounds
 	if (row < 0 || row >= m_nRows || col < 0 || col >= m_nColumns)
 		return m_arrColors[0];
 	return m_arrColors[m_arrBoard[row][col]];
@@ -53,12 +51,10 @@ void CSameGameBoard::DeleteBoard(void)
 		{
 			if (m_arrBoard[row] != NULL)
 			{
-				// Сначала удаляем каждую отдельную строку
 				delete[] m_arrBoard[row];
 				m_arrBoard[row] = NULL;
 			}
 		}
-		// В конце удаляем массив, содержащий строки
 		delete[] m_arrBoard;
 		m_arrBoard = NULL;
 	}
@@ -66,19 +62,18 @@ void CSameGameBoard::DeleteBoard(void)
 
 void CSameGameBoard::CreateBoard(void)
 {
-	// Если у нас осталась доска с предыдущего раза, то удаляем её
+	// if we have a board left from the previous time, then delete it
 	if (m_arrBoard != NULL)
 		DeleteBoard();
 
-	// Создаем массив для хранения строк
+	// create an array to store rows
 	m_arrBoard = new int* [m_nRows];
 
-	// Создаем отдельно каждую строку
 	for (int row = 0; row < m_nRows; row++)
 	{
 		m_arrBoard[row] = new int[m_nColumns];
 
-		// Устанавливаем для каждого блока значение цвета, равное цвету фона
+		// set the color value for each block to be the same as the background color.
 		for (int col = 0; col < m_nColumns; col++)
 			m_arrBoard[row][col] = 0;
 	}
@@ -86,100 +81,101 @@ void CSameGameBoard::CreateBoard(void)
 
 int CSameGameBoard::DeleteBlocks(int row, int col)
 {
-	//  Проверяем на валидность индексы ячейки и столбца
+	//  checking for validity of row and column indices
 	if (row < 0 || row >= m_nRows || col < 0 || col >= m_nColumns)
 		return -1;
-	//  Если блок уже имеет цвет фона, то удалить его уже не получится
+
+	//  if the block already has a background color, then it will no longer be possible to delete it.
 	int nColor = m_arrBoard[row][col];
 	if (nColor == 0)
 		return -1;
-	//	Сначала проверяем, если ли примыкающие блоки с тем же цветом
 
+	//	check if adjacent blocks with the same color
 	int nCount = -1;
 	if ((row - 1 >= 0 && m_arrBoard[row - 1][col] == nColor) ||
 		(row + 1 < m_nRows && m_arrBoard[row + 1][col] == nColor) ||
 		(col - 1 >= 0 && m_arrBoard[row][col - 1] == nColor) ||
 		(col + 1 < m_nColumns && m_arrBoard[row][col + 1] == nColor))
 	{
-		//  Затем рекурсивно вызываем функцию, для удаления примыкающих блоков одного цвета...
-
+		//  recursively call the function to remove adjoining blocks of the same color...
 		m_arrBoard[row][col] = 0;
 		nCount = 1;
-		//  ...сверху...
+		//  ...up...
 		nCount +=
-			DeleteNeighborBlocks(row - 1, col, nColor, DIRECTION_DOWN);
-		//  ...снизу...
+			DeleteNeighborBlocks(row - 1, col, nColor, Direction::DOWN);
+		//  ...down...
 		nCount +=
-			DeleteNeighborBlocks(row + 1, col, nColor, DIRECTION_UP);
-		//  ...слева...
+			DeleteNeighborBlocks(row + 1, col, nColor, Direction::UP);
+		//  ...left...
 		nCount +=
-			DeleteNeighborBlocks(row, col - 1, nColor, DIRECTION_RIGHT);
-		//  ...справа
+			DeleteNeighborBlocks(row, col - 1, nColor, Direction::RIGHT);
+		//  ...right
 		nCount +=
-			DeleteNeighborBlocks(row, col + 1, nColor, DIRECTION_LEFT);
-		//  В конце сжимаем нашу доску
+			DeleteNeighborBlocks(row, col + 1, nColor, Direction::LEFT);
+		//  compress our board
 		CompactBoard();
-		//  Вычитаем число удаленных блоков из общего количества
+		//  subtract the number of removed blocks from the total
 		m_nRemaining -= nCount;
 	}
-	//  Возвращаем количество удаленных блоков
+	//  returning the number of deleted blocks
 	return nCount;
 }
 
 int CSameGameBoard::DeleteNeighborBlocks(int row, int col, int color,
 	Direction direction)
 {
-	//  Проверяем на валидность индексы ячейки и столбца
+	//  checking for validity of row and column indices
 	if (row < 0 || row >= m_nRows || col < 0 || col >= m_nColumns)
 		return 0;
-	//  Проверка на то, что блок имеет тот же цвет
+
+	//  checking if a block has the same color
 	if (m_arrBoard[row][col] != color)
 		return 0;
 	int nCount = 1;
 	m_arrBoard[row][col] = 0;
-	//  Если мы пришли НЕ СВЕРХУ, то идем НАВЕРХ...
-	if (direction != DIRECTION_UP)
+	//  if we didn't come from the TOP, then we go UP...
+	if (direction != Direction::UP)
 		nCount +=
-		DeleteNeighborBlocks(row - 1, col, color, DIRECTION_DOWN);
-	//  Если мы пришли НЕ СНИЗУ, то спускаемся ВНИЗ...
-	if (direction != DIRECTION_DOWN)
+		DeleteNeighborBlocks(row - 1, col, color, Direction::DOWN);
+	//  if we did NOT come from the bottom, then we go down...
+	if (direction != Direction::DOWN)
 		nCount +=
-		DeleteNeighborBlocks(row + 1, col, color, DIRECTION_UP);
-	//  Если мы пришли НЕ СЛЕВА, то идем ВЛЕВО...
-	if (direction != DIRECTION_LEFT)
+		DeleteNeighborBlocks(row + 1, col, color, Direction::UP);
+	//  if we did NOT come from the LEFT, then we go to the LEFT ...
+	if (direction != Direction::LEFT)
 		nCount +=
-		DeleteNeighborBlocks(row, col - 1, color, DIRECTION_RIGHT);
-	//  Если мы пришли НЕ СПРАВА, то идем ВПРАВО...
-	if (direction != DIRECTION_RIGHT)
+		DeleteNeighborBlocks(row, col - 1, color, Direction::RIGHT);
+	//  if we came NOT RIGHT, then we go RIGHT ...
+	if (direction != Direction::RIGHT)
 		nCount +=
-		DeleteNeighborBlocks(row, col + 1, color, DIRECTION_LEFT);
-	//  Возвращаем общее количество удаленных блоков
+		DeleteNeighborBlocks(row, col + 1, color, Direction::LEFT);
+	//  Returning the total number of deleted blocks
 	return nCount;
 }
 
 void CSameGameBoard::CompactBoard(void)
 {
-	//  Сначала мы всё сдвигаем вниз
+	//  move everything down
 	for (int col = 0; col < m_nColumns; col++)
 	{
 		int nNextEmptyRow = m_nRows - 1;
 		int nNextOccupiedRow = nNextEmptyRow;
 		while (nNextOccupiedRow >= 0 && nNextEmptyRow >= 0)
 		{
-			//  Сначала мы находим пустую строку
+			//  find an empty string
 			while (nNextEmptyRow >= 0 &&
 				m_arrBoard[nNextEmptyRow][col] != 0)
 				nNextEmptyRow--;
 			if (nNextEmptyRow >= 0)
 			{
-				//  Затем находим занятую строку, расположенную следом за пустой
+				//  find the busy line next to the empty one
 				nNextOccupiedRow = nNextEmptyRow - 1;
 				while (nNextOccupiedRow >= 0 &&
 					m_arrBoard[nNextOccupiedRow][col] == 0)
 					nNextOccupiedRow--;
 				if (nNextOccupiedRow >= 0)
 				{
-					// Теперь перемещаем блоки с занятой строки на пустую 
+					// move blocks from a busy line to an empty one
 					m_arrBoard[nNextEmptyRow][col] =
 						m_arrBoard[nNextOccupiedRow][col];
 					m_arrBoard[nNextOccupiedRow][col] = 0;
@@ -187,25 +183,25 @@ void CSameGameBoard::CompactBoard(void)
 			}
 		}
 	}
-	//  Затем всё, что справа, смещаем влево
+	//  everything on the right is shifted to the left
 	int nNextEmptyCol = 0;
 	int nNextOccupiedCol = nNextEmptyCol;
 	while (nNextEmptyCol < m_nColumns && nNextOccupiedCol < m_nColumns)
 	{
-		//  Сначала мы находим пустой столбец
+		//  find an empty column
 		while (nNextEmptyCol < m_nColumns &&
 			m_arrBoard[m_nRows - 1][nNextEmptyCol] != 0)
 			nNextEmptyCol++;
 		if (nNextEmptyCol < m_nColumns)
 		{
-			//  Затем находим занятый столбец, расположенный следом за пустым
+			//  find the occupied column next to the empty one
 			nNextOccupiedCol = nNextEmptyCol + 1;
 			while (nNextOccupiedCol < m_nColumns &&
 				m_arrBoard[m_nRows - 1][nNextOccupiedCol] == 0)
 				nNextOccupiedCol++;
 			if (nNextOccupiedCol < m_nColumns)
 			{
-				//  Двигаем весь слобец влево
+				//  move the whole column to the left
 				for (int row = 0; row < m_nRows; row++)
 				{
 					m_arrBoard[row][nNextEmptyCol] =
@@ -219,19 +215,19 @@ void CSameGameBoard::CompactBoard(void)
 
 bool CSameGameBoard::IsGameOver(void) const
 {
-	//  Проверяем столбец за столбцом, слева-направо
+	//  checking column by column, from left to right
 	for (int col = 0; col < m_nColumns; col++)
 	{
-		//  Строку за строкой, снизу-вверх
+		//  row by row, bottom to top
 		for (int row = m_nRows - 1; row >= 0; row--)
 		{
 			int nColor = m_arrBoard[row][col];
-			//  Если мы попали на ячейку с цветом фона, значит этот столбец уже уничтожен
+			//  if we hit a cell with a background color, then this column has already been destroyed
 			if (nColor == 0)
 				break;
 			else
 			{
-				//  Проверяем сверху и справа
+				//  checking top and right
 				if (row - 1 >= 0 &&
 					m_arrBoard[row - 1][col] == nColor)
 					return false;
@@ -241,6 +237,6 @@ bool CSameGameBoard::IsGameOver(void) const
 			}
 		}
 	}
-	//  Если примыкающих блоков не обнаружено
+	//  if no adjoining blocks are found
 	return true;
 }

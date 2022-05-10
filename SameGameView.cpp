@@ -55,23 +55,23 @@ void CSameGameView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 
-	// Сохраняем текущее состояние контекста устройства
+	// saving the current state of the device context
 	int nDCSave = pDC->SaveDC();
 
-	// Получаем размеры клиентской области
+	// getting the dimensions of the client area
 	CRect rcClient;
 	GetClientRect(&rcClient);
 	COLORREF clr = pDoc->GetBoardSpace(-1, -1);
 
-	// Сначала отрисовываем фон
+	// draw the background
 	pDC->FillSolidRect(&rcClient, clr);
 
-	// Создаем кисть для рисования
+	// create a paint brush
 	CBrush br;
 	br.CreateStockObject(HOLLOW_BRUSH);
 	CBrush* pbrOld = pDC->SelectObject(&br);
 
-	// Рисуем блоки
+	// draw blocks
 	for (int row = 0; row < pDoc->GetRows(); row++)
 	{
 		for (int col = 0; col < pDoc->GetColumns(); col++)
@@ -79,23 +79,23 @@ void CSameGameView::OnDraw(CDC* pDC)
 
 			clr = pDoc->GetBoardSpace(row, col);
 
-			// Вычисляем размер и позицию игрового пространства
+			// calculate the size and position of the game space
 			CRect rcBlock;
 			rcBlock.top = row * pDoc->GetHeight();
 			rcBlock.left = col * pDoc->GetWidth();
 			rcBlock.right = rcBlock.left + pDoc->GetWidth();
 			rcBlock.bottom = rcBlock.top + pDoc->GetHeight();
 
-			// Заполняем блок соответствующим цветом
+			// fill the block with the appropriate color
 			pDC->FillSolidRect(&rcBlock, clr);
 
-			// Рисуем контур
+			// draw a contour
 			pDC->Rectangle(&rcBlock);
 
 		}
 
 	}
-	// Восстанавливаем контекст устройства
+	// restoring the device context
 	pDC->RestoreDC(nDCSave);
 	br.DeleteObject();
 }
@@ -123,31 +123,32 @@ CSameGameDoc* CSameGameView::GetDocument() const // встроена неотл�
 
 void CSameGameView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	//  Вначале создаем указатель на Document
+	//  create a pointer to Document
 	CSameGameDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-	//  Получаем индекс строки и столбца элемента, по которому был клик мышкой
+
+	// get the row and column index of the element that was clicked
 	int row = point.y / pDoc->GetHeight();
 	int col = point.x / pDoc->GetWidth();
-	//  Удаляем блоки из Document
+	//  Removing blocks from Document
 	int count = pDoc->DeleteBlocks(row, col);
-	//  Проверяем, было ли удаление блоков
+	//  checking if blocks have been removed
 	if (count > 0)
 	{
-		//  Перерисовываем View
+		//  redrawing the View
 		Invalidate();
 		UpdateWindow();
-		//  Проверяем, закончилась ли игра
+		//  checking if the game is over
 		if (pDoc->IsGameOver())
 		{
-			//  Получаем количество оставшихся блоков
+			//  get the number of remaining blocks
 			int remaining = pDoc->GetRemainingCount();
 			CString message;
 			message.Format(_T("Нет доступных ходов\nКоличество оставшихся блоков: %d"),
 				remaining);
-			//  Отображаем пользователю результат игры
+			//  displaying the result of the game to the user
 			MessageBox(message, _T("Игра Закончена"), MB_OK | MB_ICONINFORMATION);
 		}
 	}
@@ -160,33 +161,30 @@ void CSameGameView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
 
-	// Изменяем размеры окна
 	ResizeWindow();
 
 }
 
-
 void CSameGameView::ResizeWindow()
 {
-	// Создаем указатель на Document
 	CSameGameDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
 
-	// Получаем размеры клиентской области
+	// getting the dimensions of the client area
 	CRect rcClient, rcWindow;
 	GetClientRect(&rcClient);
 	GetParentFrame()->GetWindowRect(&rcWindow);
 	int nWidthDiff = rcWindow.Width() - rcClient.Width();
 	int nHeightDiff = rcWindow.Height() - rcClient.Height();
-	// Изменяем размеры окна, исходя из размеров нашей доски
+
+	// Resizing the window based on the size of our board
 	rcWindow.right = rcWindow.left +
 		pDoc->GetWidth() * pDoc->GetColumns() + nWidthDiff;
 	rcWindow.bottom = rcWindow.top +
 		pDoc->GetHeight() * pDoc->GetRows() + nHeightDiff;
 
-	// Функция MoveWindow() изменяет размер окна фрейма
 	GetParentFrame()->MoveWindow(&rcWindow);
 }
 // Обработчики сообщений CSameGameView
