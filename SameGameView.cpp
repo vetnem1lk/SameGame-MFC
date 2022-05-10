@@ -23,6 +23,7 @@
 IMPLEMENT_DYNCREATE(CSameGameView, CView)
 
 BEGIN_MESSAGE_MAP(CSameGameView, CView)
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // Создание или уничтожение CSameGameView
@@ -119,6 +120,41 @@ CSameGameDoc* CSameGameView::GetDocument() const // встроена неотл�
 	return (CSameGameDoc*)m_pDocument;
 }
 #endif //_DEBUG
+
+void CSameGameView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	//  Вначале создаем указатель на Document
+	CSameGameDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	//  Получаем индекс строки и столбца элемента, по которому был клик мышкой
+	int row = point.y / pDoc->GetHeight();
+	int col = point.x / pDoc->GetWidth();
+	//  Удаляем блоки из Document
+	int count = pDoc->DeleteBlocks(row, col);
+	//  Проверяем, было ли удаление блоков
+	if (count > 0)
+	{
+		//  Перерисовываем View
+		Invalidate();
+		UpdateWindow();
+		//  Проверяем, закончилась ли игра
+		if (pDoc->IsGameOver())
+		{
+			//  Получаем количество оставшихся блоков
+			int remaining = pDoc->GetRemainingCount();
+			CString message;
+			message.Format(_T("Нет доступных ходов\nКоличество оставшихся блоков: %d"),
+				remaining);
+			//  Отображаем пользователю результат игры
+			MessageBox(message, _T("Игра Закончена"), MB_OK | MB_ICONINFORMATION);
+		}
+	}
+	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
+
+	CView::OnLButtonDown(nFlags, point);
+}
 
 void CSameGameView::OnInitialUpdate()
 {

@@ -39,6 +39,7 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual void OnInitialUpdate();
 };
 
