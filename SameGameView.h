@@ -54,9 +54,7 @@ public:
 	afx_msg void OnLevel7colors();
 	afx_msg void OnUpdateLevel7colors(CCmdUI* pCmdUI);
 	afx_msg void OnSetupBlocksize();
-	afx_msg void OnUpdateSetupBlocksize(CCmdUI* pCmdUI);
 	afx_msg void OnSetupBlockcount();
-	afx_msg void OnUpdateSetupBlockcount(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // версия отладки в SameGameView.cpp

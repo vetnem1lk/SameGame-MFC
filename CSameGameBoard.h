@@ -6,6 +6,9 @@ class CSameGameBoard
 public:
 	CSameGameBoard(void);
 
+	// Deep copy constructor
+	CSameGameBoard(const CSameGameBoard& board);
+
 	~CSameGameBoard(void);
 
 	// creating and configuring game board settings
@@ -17,9 +20,26 @@ public:
 	//  counting the number of remaining blocks
 	int GetRemainingCount(void) const { return m_nRemaining; }
 	int GetWidth(void) const { return m_nWidth; }
+	void SetWidth(int nWidth)
+	{
+		m_nWidth = (nWidth >= 3) ? nWidth : 3;
+	}
 	int GetHeight(void) const { return m_nHeight; }
+	void SetHeight(int nHeight)
+	{
+		m_nHeight = (nHeight >= 3) ? nHeight : 3;
+	}
 	int GetColumns(void) const { return m_nColumns; }
+	void SetColumns(int nColumns)
+	{
+		m_nColumns = (nColumns >= 5) ? nColumns : 5;
+	}
 	int GetRows(void) const { return m_nRows; }
+	void SetRows(int nRows)
+	{
+		m_nRows = (nRows >= 5) ? nRows : 5;
+	}
+
 	int GetNumColors(void) { return m_nColors; }
 	void SetNumColors(int nColors)
 	{

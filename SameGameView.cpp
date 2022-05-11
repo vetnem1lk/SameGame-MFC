@@ -12,6 +12,7 @@
 
 #include "SameGameDoc.h"
 #include "SameGameView.h"
+#include "COptionDialog.h" 
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,9 +36,7 @@ BEGIN_MESSAGE_MAP(CSameGameView, CView)
 	ON_COMMAND(ID_LEVEL_7COLORS, &CSameGameView::OnLevel7colors)
 	ON_UPDATE_COMMAND_UI(ID_LEVEL_7COLORS, &CSameGameView::OnUpdateLevel7colors)
 	ON_COMMAND(ID_SETUP_BLOCKSIZE, &CSameGameView::OnSetupBlocksize)
-	ON_UPDATE_COMMAND_UI(ID_SETUP_BLOCKSIZE, &CSameGameView::OnUpdateSetupBlocksize)
 	ON_COMMAND(ID_SETUP_BLOCKCOUNT, &CSameGameView::OnSetupBlockcount)
-	ON_UPDATE_COMMAND_UI(ID_SETUP_BLOCKCOUNT, &CSameGameView::OnUpdateSetupBlockcount)
 END_MESSAGE_MAP()
 
 // Создание или уничтожение CSameGameView
@@ -292,23 +291,42 @@ void CSameGameView::OnUpdateLevel7colors(CCmdUI* pCmdUI)
 
 void CSameGameView::OnSetupBlocksize()
 {
-	// TODO: добавьте свой код обработчика команд
+	CSameGameDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	COptionDialog dlg(false, this);
+	dlg.m_nValue1 = pDoc->GetWidth();
+	dlg.m_nValue2 = pDoc->GetHeight();
+	// Display the resulting window
+	if (dlg.DoModal() == IDOK)
+	{
+		pDoc->DeleteBoard();
+		pDoc->SetWidth(dlg.m_nValue1);
+		pDoc->SetHeight(dlg.m_nValue2);
+		pDoc->SetupBoard();
+		ResizeWindow();
+	}
 }
-
-
-void CSameGameView::OnUpdateSetupBlocksize(CCmdUI* pCmdUI)
-{
-	// TODO: добавьте свой код обработчика ИП обновления команд
-}
-
 
 void CSameGameView::OnSetupBlockcount()
 {
-	// TODO: добавьте свой код обработчика команд
-}
+	CSameGameDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
 
-
-void CSameGameView::OnUpdateSetupBlockcount(CCmdUI* pCmdUI)
-{
-	// TODO: добавьте свой код обработчика ИП обновления команд
+	COptionDialog dlg(true, this);
+	//  Setting row and column options
+	dlg.m_nValue1 = pDoc->GetRows();
+	dlg.m_nValue2 = pDoc->GetColumns();
+	//  Display the resulting window
+	if (dlg.DoModal() == IDOK)
+	{
+		pDoc->DeleteBoard();
+		pDoc->SetRows(dlg.m_nValue1);
+		pDoc->SetColumns(dlg.m_nValue2);
+		pDoc->SetupBoard();
+		ResizeWindow();
+	}
 }
