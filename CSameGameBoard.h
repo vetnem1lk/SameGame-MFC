@@ -20,6 +20,11 @@ public:
 	int GetHeight(void) const { return m_nHeight; }
 	int GetColumns(void) const { return m_nColumns; }
 	int GetRows(void) const { return m_nRows; }
+	int GetNumColors(void) { return m_nColors; }
+	void SetNumColors(int nColors)
+	{
+		m_nColors = (nColors >= 3 && nColors <= 7) ? nColors : m_nColors;
+	}
 
 	bool IsGameOver(void) const;
 	int DeleteBlocks(int row, int col);
@@ -46,8 +51,8 @@ private:
 
 	int** m_arrBoard;
 
-	// list of colors: 0 is the background color, 1-3 are the block colors
-	COLORREF m_arrColors[4];
+	// list of colors: 0 is the background color, 1-7 are the block colors
+	COLORREF m_arrColors[8];
 
 	// Information about the size of the playing field
 	int m_nColumns;
@@ -57,5 +62,7 @@ private:
 
 	// Number of remaining blocks
 	int m_nRemaining;
+	// Number of colors
+	int m_nColors;
 };
 

@@ -45,7 +45,11 @@ BOOL CSameGameDoc::OnNewDocument()
 	return TRUE;
 }
 
-
+void CSameGameDoc::SetNumColors(int nColors)
+{
+	m_board.SetNumColors(nColors);
+	m_board.SetupBoard();
+}
 
 
 // Сериализация CSameGameDoc

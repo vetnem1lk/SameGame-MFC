@@ -26,6 +26,8 @@ protected:
 
 	// Реализация
 public:
+	void setColorCount(int numColors);
+	void checkLevelColors(CCmdUI* pCmdUI, int numColors);
 	void ResizeWindow();
 	virtual ~CSameGameView();
 #ifdef _DEBUG
@@ -41,6 +43,20 @@ protected:
 public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual void OnInitialUpdate();
+	afx_msg void OnLevel3colors();
+	afx_msg void OnUpdateLevel3colors(CCmdUI* pCmdUI);
+	afx_msg void OnLevel4colors();
+	afx_msg void OnUpdateLevel4colors(CCmdUI* pCmdUI);
+	afx_msg void OnLevel5colors();
+	afx_msg void OnUpdateLevel5colors(CCmdUI* pCmdUI);
+	afx_msg void OnLevel6colors();
+	afx_msg void OnUpdateLevel6colors(CCmdUI* pCmdUI);
+	afx_msg void OnLevel7colors();
+	afx_msg void OnUpdateLevel7colors(CCmdUI* pCmdUI);
+	afx_msg void OnSetupBlocksize();
+	afx_msg void OnUpdateSetupBlocksize(CCmdUI* pCmdUI);
+	afx_msg void OnSetupBlockcount();
+	afx_msg void OnUpdateSetupBlockcount(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // версия отладки в SameGameView.cpp

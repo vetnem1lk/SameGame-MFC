@@ -129,8 +129,6 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnLevel3colors();
-	afx_msg void OnUpdateLevel3colors(CCmdUI* pCmdUI);
 };
 
 CAboutDlg::CAboutDlg() noexcept : CDialogEx(IDD_ABOUTBOX)
@@ -143,8 +141,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-	ON_COMMAND(ID_LEVEL_3COLORS, &CAboutDlg::OnLevel3colors)
-	ON_UPDATE_COMMAND_UI(ID_LEVEL_3COLORS, &CAboutDlg::OnUpdateLevel3colors)
 END_MESSAGE_MAP()
 
 // Команда приложения для запуска диалога
@@ -156,17 +152,3 @@ void CSameGameApp::OnAppAbout()
 
 // Обработчики сообщений CSameGameApp
 
-
-
-
-
-void CAboutDlg::OnLevel3colors()
-{
-	// TODO: добавьте свой код обработчика команд
-}
-
-
-void CAboutDlg::OnUpdateLevel3colors(CCmdUI* pCmdUI)
-{
-	// TODO: добавьте свой код обработчика ИП обновления команд
-}
