@@ -37,14 +37,16 @@ BEGIN_MESSAGE_MAP(CSameGameView, CView)
 	ON_UPDATE_COMMAND_UI(ID_LEVEL_7COLORS, &CSameGameView::OnUpdateLevel7colors)
 	ON_COMMAND(ID_SETUP_BLOCKSIZE, &CSameGameView::OnSetupBlocksize)
 	ON_COMMAND(ID_SETUP_BLOCKCOUNT, &CSameGameView::OnSetupBlockcount)
+	ON_COMMAND(ID_GAME_UNDO, &CSameGameView::OnGameUndo)
+	ON_UPDATE_COMMAND_UI(ID_GAME_UNDO, &CSameGameView::OnUpdateGameUndo)
+	ON_COMMAND(ID_GAME_REDO, &CSameGameView::OnGameRedo)
+	ON_UPDATE_COMMAND_UI(ID_GAME_REDO, &CSameGameView::OnUpdateGameRedo)
 END_MESSAGE_MAP()
 
 // Создание или уничтожение CSameGameView
 
 CSameGameView::CSameGameView() noexcept
 {
-	// TODO: добавьте код создания
-
 }
 
 CSameGameView::~CSameGameView()
@@ -329,4 +331,49 @@ void CSameGameView::OnSetupBlockcount()
 		pDoc->SetupBoard();
 		ResizeWindow();
 	}
+}
+
+void CSameGameView::OnGameUndo()
+{
+	CSameGameDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->UndoLast();
+	Invalidate();
+	UpdateWindow();
+}
+
+
+void CSameGameView::OnUpdateGameUndo(CCmdUI* pCmdUI)
+{
+	CSameGameDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	//  Enable option if it is available
+	pCmdUI->Enable(pDoc->CanUndo());
+}
+
+
+void CSameGameView::OnGameRedo()
+{
+	CSameGameDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->RedoLast();
+	Invalidate();
+	UpdateWindow();
+}
+
+
+void CSameGameView::OnUpdateGameRedo(CCmdUI* pCmdUI)
+{
+	CSameGameDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	//  Enable option if it is available
+	pCmdUI->Enable(pDoc->CanRedo());
 }

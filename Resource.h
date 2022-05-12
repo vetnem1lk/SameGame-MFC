@@ -39,13 +39,15 @@
 #define ID_LEVEL_7COLORS                32783
 #define ID_SETUP_BLOCKSIZE              32784
 #define ID_SETUP_BLOCKCOUNT             32785
+#define ID_GAME_REDO                    32786
+#define ID_GAME_UNDO                    32787
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        312
-#define _APS_NEXT_COMMAND_VALUE         32786
+#define _APS_NEXT_COMMAND_VALUE         32791
 #define _APS_NEXT_CONTROL_VALUE         1005
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

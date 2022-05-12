@@ -20,6 +20,27 @@ CSameGameBoard::CSameGameBoard(void)
 	SetupBoard();
 }
 
+CSameGameBoard::CSameGameBoard(const CSameGameBoard& board)
+{
+	// Copying all elements of a class
+	m_nColumns = board.m_nColumns;
+	m_nRows = board.m_nRows;
+	m_nHeight = board.m_nHeight;
+	m_nWidth = board.m_nWidth;
+	m_nRemaining = board.m_nRemaining;
+	m_nColors = board.m_nColors;
+	// color elements
+	for (int i = 0; i < 8; i++)
+		m_arrColors[i] = board.m_arrColors[i];
+	m_arrBoard = NULL;
+
+	CreateBoard();
+	//  Gameboard Content
+	for (int row = 0; row < m_nRows; row++)
+		for (int col = 0; col < m_nColumns; col++)
+			m_arrBoard[row][col] = board.m_arrBoard[row][col];
+}
+
 CSameGameBoard::~CSameGameBoard(void)
 {
 	DeleteBoard();

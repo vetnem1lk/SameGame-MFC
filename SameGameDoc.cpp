@@ -26,12 +26,14 @@ END_MESSAGE_MAP()
 
 CSameGameDoc::CSameGameDoc() noexcept
 {
-	// TODO: добавьте код для одноразового вызова конструктора
-
+	m_board = new CSameGameBoard();
 }
 
 CSameGameDoc::~CSameGameDoc()
 {
+	delete m_board;
+	ClearUndo();
+	ClearRedo();
 }
 
 BOOL CSameGameDoc::OnNewDocument()
@@ -40,17 +42,78 @@ BOOL CSameGameDoc::OnNewDocument()
 		return FALSE;
 
 	// set (or reset) board options
-	m_board.SetupBoard();
+	m_board->SetupBoard();
+	ClearUndo();
+	ClearRedo();
 
 	return TRUE;
 }
 
 void CSameGameDoc::SetNumColors(int nColors)
 {
-	m_board.SetNumColors(nColors);
-	m_board.SetupBoard();
+	m_board->SetNumColors(nColors);
+	m_board->SetupBoard();
 }
 
+int CSameGameDoc::DeleteBlocks(int row, int col)
+{
+	//  Saving the current state of the board in the "Undo stack"
+	m_undo.push(new CSameGameBoard(*m_board));
+	ClearRedo();
+	int blocks = m_board->DeleteBlocks(row, col);
+
+	if (m_board->IsGameOver())
+		ClearUndo();
+
+	return blocks;
+}
+
+void CSameGameDoc::UndoLast()
+{
+	if (m_undo.empty())
+		return;
+	m_redo.push(m_board);
+	//  Take the top element of the "Undo stack" and make it current
+	m_board = m_undo.top();
+	m_undo.pop();
+}
+
+bool CSameGameDoc::CanUndo()
+{
+	return !m_undo.empty();
+}
+
+void CSameGameDoc::RedoLast()
+{
+	if (m_redo.empty())
+		return;
+	m_undo.push(m_board);
+	m_board = m_redo.top();
+	m_redo.pop();
+}
+
+bool CSameGameDoc::CanRedo()
+{
+	return !m_redo.empty();
+}
+
+void CSameGameDoc::ClearUndo()
+{
+	while (!m_undo.empty())
+	{
+		delete m_undo.top();
+		m_undo.pop();
+	}
+}
+
+void CSameGameDoc::ClearRedo()
+{
+	while (!m_redo.empty())
+	{
+		delete m_redo.top();
+		m_redo.pop();
+	}
+}
 
 // Сериализация CSameGameDoc
 
